@@ -134,7 +134,8 @@ async function incluirAccount() {
     }
     bloquearCampos(true);
     mostrarBotoes(false, false, false, false, true, true);
-    document.getElementById('unique_username').focus();
+    
+    document.getElementById('unique_username').disabled = true;
     operacao = 'incluir';
 }
 
@@ -206,6 +207,8 @@ async function salvarOperacao() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(account)
                 });
+
+                // Foi alterado?
                 const dataAccountAlt = await respAccount.json();
                 if (!dataAccountAlt.sucesso) {
                     throw new Error(dataAccountAlt.mensagem || 'Erro ao atualizar conta');
@@ -213,6 +216,7 @@ async function salvarOperacao() {
 
                 const respVerifAdmin = await fetch(caminhoAdmin);
                 if (admin.admin_canManageUsers || admin.admin_canManagePosts) {
+                    // Não é admin... logo torne-o um admin.
                     if (respVerifAdmin.status === 404) {
                         await fetch(`${API_BASE_URL}/admin`, {
                             method: 'POST',
